@@ -33,7 +33,7 @@ def r128Stats(filePath):
                      'LRA Threshold': LRAThresh, 'LRA Low': LRALow,
                      'LRA High': LRAHigh}
     except: 
-        return 0 
+        return
     return statsDict
 
 
@@ -81,9 +81,7 @@ def neg23File(filePath):
     print "Scanning " + filePath + " for loudness..."
     try:
         loudnessStats = r128Stats(filePath)
-        if loudnessStats == 0:
-            print "neg23 encountered an error scanning " + filePath
-            return
+        int(loudnessStats('I'))
     except:
         print "neg23 encountered an error scanning " + filePath
         return
