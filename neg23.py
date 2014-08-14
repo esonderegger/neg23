@@ -81,7 +81,7 @@ def neg23File(filePath):
     print "Scanning " + filePath + " for loudness..."
     try:
         loudnessStats = r128Stats(filePath)
-        int(loudnessStats('I'))
+        float(loudnessStats('I'))
     except:
         print "neg23 encountered an error scanning " + filePath
         return
