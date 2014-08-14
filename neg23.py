@@ -52,7 +52,11 @@ def ffApplyGain(inPath, outPath, linearAmount):
     if outPath[-4:].lower() == '.mp3':
         ffargs += ['-acodec', 'libmp3lame', '-aq', '0']
     ffargs += [outPath]
-    subprocess.Popen(ffargs, stderr=subprocess.PIPE)
+    try:
+        subprocess.Popen(ffargs, stderr=subprocess.PIPE)
+    except:
+        return False
+    return True
 
 
 def notAudio(filePath):
@@ -89,10 +93,10 @@ def neg23File(filePath):
         os.makedirs(outputDir)
     outputPath = os.path.join(outputDir, os.path.basename(filePath))
     print "Creating -23LUFS file at " + outputPath
-    try:
-        ffApplyGain(filePath, outputPath, gainAmount)
-    except:
+    ffGainSuccess = ffApplyGain(filePath, outputPath, gainAmount)
+    if not ffGainSuccess:
         print "neg23 encountered an error applying gain to " + filePath
+        return
     print "Done"
 
 
