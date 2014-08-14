@@ -32,8 +32,8 @@ def r128Stats(filePath):
         statsDict = {'I': ILufs, 'I Threshold': IThresh, 'LRA': LRA,
                      'LRA Threshold': LRAThresh, 'LRA Low': LRALow,
                      'LRA High': LRAHigh}
-    except: 
-        return
+    except:
+        return False
     return statsDict
 
 
@@ -79,10 +79,8 @@ def neg23File(filePath):
         print "Not a valid audio file."
         return False
     print "Scanning " + filePath + " for loudness..."
-    try:
-        loudnessStats = r128Stats(filePath)
-        float(loudnessStats('I'))
-    except:
+    loudnessStats = r128Stats(filePath)
+    if not loudnessStats:
         print "neg23 encountered an error scanning " + filePath
         return
     gainAmount = linearGain(loudnessStats['I'])
