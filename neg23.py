@@ -18,19 +18,22 @@ def r128Stats(filePath):
               '-f',
               'null',
               '-']
-    proc = subprocess.Popen(ffargs, stderr=subprocess.PIPE)
-    stats = proc.communicate()[1]
-    summaryIndex = stats.rfind('Summary:')
-    summaryList = stats[summaryIndex:].split()
-    ILufs = float(summaryList[summaryList.index('I:') + 1])
-    IThresh = float(summaryList[summaryList.index('I:') + 4])
-    LRA = float(summaryList[summaryList.index('LRA:') + 1])
-    LRAThresh = float(summaryList[summaryList.index('LRA:') + 4])
-    LRALow = float(summaryList[summaryList.index('low:') + 1])
-    LRAHigh = float(summaryList[summaryList.index('high:') + 1])
-    statsDict = {'I': ILufs, 'I Threshold': IThresh, 'LRA': LRA,
-                 'LRA Threshold': LRAThresh, 'LRA Low': LRALow,
-                 'LRA High': LRAHigh}
+    try:
+        proc = subprocess.Popen(ffargs, stderr=subprocess.PIPE)
+        stats = proc.communicate()[1]
+        summaryIndex = stats.rfind('Summary:')
+        summaryList = stats[summaryIndex:].split()
+        ILufs = float(summaryList[summaryList.index('I:') + 1])
+        IThresh = float(summaryList[summaryList.index('I:') + 4])
+        LRA = float(summaryList[summaryList.index('LRA:') + 1])
+        LRAThresh = float(summaryList[summaryList.index('LRA:') + 4])
+        LRALow = float(summaryList[summaryList.index('low:') + 1])
+        LRAHigh = float(summaryList[summaryList.index('high:') + 1])
+        statsDict = {'I': ILufs, 'I Threshold': IThresh, 'LRA': LRA,
+                     'LRA Threshold': LRAThresh, 'LRA Low': LRALow,
+                     'LRA High': LRAHigh}
+    except: 
+        return
     return statsDict
 
 
@@ -78,8 +81,10 @@ def neg23File(filePath):
     print "Scanning " + filePath + " for loudness..."
     try:
         loudnessStats = r128Stats(filePath)
+        float(loudnessStats('I'))
     except:
         print "neg23 encountered an error scanning " + filePath
+        return
     gainAmount = linearGain(loudnessStats['I'])
     outputDir = os.path.join(os.path.dirname(filePath), "neg23")
     if not os.path.isdir(outputDir):
@@ -96,8 +101,6 @@ def neg23File(filePath):
 if __name__ == "__main__":
     if len(sys.argv) == 2 and os.path.isdir(sys.argv[1]):
         neg23Directory(sys.argv[1])
-    elif len(sys.argv) == 1:
-        neg23Directory(os.getcwd())
     elif len(sys.argv) == 2 and os.path.isfile(sys.argv[1]):
         neg23File(sys.argv[1])
     elif len(sys.argv) == 2 and os.path.isfile(os.path.join(os.getcwd(),
